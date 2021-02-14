@@ -88,8 +88,8 @@ void setup() {
   Serial.begin(115200);               // Set up serial port
   pinMode(BUTTON_PIN_1, INPUT_PULLUP);
   pinMode(BUTTON_PIN_2, INPUT_PULLUP);
-  pinMode(INA, OUTPUT)
-  pinMode(INB, OUTPUT)
+  pinMode(INA, OUTPUT);
+  pinMode(INB, OUTPUT);
   tft.init();
   tft.setRotation(2);
   tft.setTextSize(1);
