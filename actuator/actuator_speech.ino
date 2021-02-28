@@ -7,7 +7,7 @@ TFT_eSPI tft = TFT_eSPI();
 
 const int DELAY = 1000;
 const int SAMPLE_FREQ = 8000;                          // Hz, telephone sample rate
-const float SAMPLE_DURATION = 5.5;                        // duration of fixed sampling (seconds)
+const float SAMPLE_DURATION = 2;// 5.5;                        // duration of fixed sampling (seconds)
 const int NUM_SAMPLES = SAMPLE_FREQ * SAMPLE_DURATION;  // number of of samples
 const int ENC_LEN = (NUM_SAMPLES + 2 - ((NUM_SAMPLES + 2) % 3)) / 3 * 4;  // Encoded length of clip
 
@@ -23,10 +23,11 @@ const int AUDIO_IN = A0; //pin where microphone is connected
 //const char API_KEY[] = "AIzaSyDqpeTAs-OsdG1Q4W4ANSNrNJKv8T7PgX8"; //don't change this
 const char API_KEY[] = "AIzaSyAXCndiHqZS3syF4OHO6VzDRJ6o3L3rIwM";
 
-const uint8_t PIN_1 = 16; //button 1
-const uint8_t PIN_2 = 17; //button 2
-const int INA = 5;
-const int INB = 19;
+const uint8_t PIN_1 = 19; //button 1
+const uint8_t PIN_2 = 5; //button 2
+const int INA = 26;
+const int INB = 27;
+const int MOTOR_ENABLE = 14;
 
 /* Global variables*/
 uint8_t button_state; //used for containing button state and detecting edges
@@ -60,6 +61,7 @@ void setup() {
   pinMode(14, OUTPUT);
   pinMode(INA, OUTPUT);
   pinMode(INB, OUTPUT);
+  pinMode(MOTOR_ENABLE, OUTPUT);
 
   WiFi.begin(NETWORK, PASSWORD); //attempt to connect to wifi
   uint8_t count = 0; //count used for Wifi check times
@@ -88,14 +90,16 @@ void setup() {
 
 //main body of code
 void loop() {
+  Serial.println("Loop Started");
   button_state = digitalRead(PIN_1);
   // Serial.println(button_state); UP: 1, DOWN: 0
-  if (!button_state && button_state != old_button_state) {
+  // if (!button_state && button_state != old_button_state) {
+  if (1){ // @dev: Lay
     Serial.println("listening...");
     record_audio();
     Serial.println("sending...");
     Serial.print("\nStarting connection to server...");
-    delay(300);
+    //delay(300);
     bool conn = false;
     for (int i = 0; i < 10; i++) {
       int val = (int)client.connect(SERVER, 443);
@@ -105,7 +109,7 @@ void loop() {
         break;
       }
       Serial.print(".");
-      delay(300);
+      //delay(300);
     }
     if (!conn) {
       Serial.println("Connection failed!");
@@ -195,7 +199,8 @@ void record_audio() {
   uint32_t text_index = enc_index;
   uint32_t start = millis();
   time_since_sample = micros();
-  while (sample_num < NUM_SAMPLES && !digitalRead(PIN_1)) { //read in NUM_SAMPLES worth of audio data
+  //while (sample_num < NUM_SAMPLES && !digitalRead(PIN_1)) { //read in NUM_SAMPLES worth of audio data
+  while(sample_num < NUM_SAMPLES) { // @dev: Lay
     value = analogRead(AUDIO_IN);  //make measurement
     raw_samples[sample_num % 3] = mulaw_encode(value - 1241); //remove 1.0V offset (from 12 bit reading)
     sample_num++;
@@ -248,16 +253,22 @@ void commands(char* tr) {
     if (turnOff) {
     tft.fillScreen(TFT_BLACK);
       tft.println("Light is Off");
-      digitalWrite(INA, LOW);
-      digitalWrite(INB, HIGH);
+    digitalWrite(INA, LOW);
+    digitalWrite(INB, HIGH);
+    digitalWrite(MOTOR_ENABLE, HIGH);
+    delay(2000);
+    digitalWrite(MOTOR_ENABLE, LOW);
     }
     bool turnOn = false;
     if (strstr(tr, "on") != NULL || strstr(tr, "On") != NULL) turnOn = true;
     if (turnOn) {
     tft.fillScreen(TFT_BLACK);
-      tft.println("Light is On");
-      digitalWrite(INA, HIGH);
-      digitalWrite(INB, LOW);
+    tft.println("Light is On");
+    digitalWrite(INA, HIGH);
+    digitalWrite(INB, LOW);
+    digitalWrite(MOTOR_ENABLE, HIGH);
+    delay(2000);
+    digitalWrite(MOTOR_ENABLE, LOW);
     }
   }
 }
