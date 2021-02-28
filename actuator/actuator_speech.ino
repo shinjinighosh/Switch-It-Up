@@ -27,8 +27,8 @@ const uint8_t PIN_2 = 5; //button 2
 const int INA = 26;
 const int INB = 27;  
 const int MOTOR_ENABLE = 14;
-const uint8_t GREEN_LIGHT = 16;
-const uint8_t RED_LIGHT = 17;
+const byte GREEN_LIGHT = 32;
+const byte RED_LIGHT = 25;
 /* Global variables*/
 uint8_t button_state; //used for containing button state and detecting edges
 int old_button_state; //used for detecting button edges
@@ -95,16 +95,18 @@ void loop() {
   //Serial.println("Loop Started");
   digitalWrite(GREEN_LIGHT, HIGH);
   digitalWrite(RED_LIGHT, LOW);
+  tft.fillScreen(TFT_GREEN);
   button_state = digitalRead(PIN_1);
   // Serial.println(button_state); UP: 1, DOWN: 0
-  if (!button_state && button_state != old_button_state) {
-    //if (1){ // @dev: Lay
+  //if (!button_state && button_state != old_button_state) {
+  if (1){ // @dev: Lay
     Serial.println("listening...");
     record_audio();
     Serial.println("sending...");
     //Indicator to Shut Up
     digitalWrite(RED_LIGHT, HIGH);
     digitalWrite(GREEN_LIGHT, LOW);
+    tft.fillScreen(TFT_RED);
     Serial.print("\nStarting connection to server...");
     //delay(300);
     bool conn = false;
@@ -206,8 +208,8 @@ void record_audio() {
   uint32_t text_index = enc_index;
   uint32_t start = millis();
   time_since_sample = micros();
-  while (sample_num < NUM_SAMPLES && !digitalRead(PIN_1)) { //read in NUM_SAMPLES worth of audio data
-    //while(sample_num < NUM_SAMPLES) { // @dev: Lay
+  //while (sample_num < NUM_SAMPLES && !digitalRead(PIN_1)) { //read in NUM_SAMPLES worth of audio data
+  while(sample_num < NUM_SAMPLES) { // @dev: Lay
     value = analogRead(AUDIO_IN);  //make measurement
     raw_samples[sample_num % 3] = mulaw_encode(value - 1241); //remove 1.0V offset (from 12 bit reading)
     sample_num++;
@@ -263,7 +265,7 @@ void commands(char* tr) {
       digitalWrite(INA, LOW);
       digitalWrite(INB, HIGH);
       digitalWrite(MOTOR_ENABLE, HIGH);
-      delay(2000);
+      delay(1000);
       digitalWrite(MOTOR_ENABLE, LOW);
     }
     bool turnOn = false;
@@ -274,7 +276,7 @@ void commands(char* tr) {
       digitalWrite(INA, HIGH);
       digitalWrite(INB, LOW);
       digitalWrite(MOTOR_ENABLE, HIGH);
-      delay(2000);
+      delay(1000);
       digitalWrite(MOTOR_ENABLE, LOW);
     }
   }
