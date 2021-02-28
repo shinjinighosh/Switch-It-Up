@@ -1,13 +1,3 @@
-<!-- ## Wiring
-
-# TODOS
-1. Design ESP32 to buttons wiring DONE
-2. Design ESP32 to mic wiring DONE
-3. FSM for buttons
-4. FSM for mic + API
-5. Motor - Lay
-6. Writeup -->
-
 # Switch-It-Up
 
 **Shinjini Ghosh, Pawan Goyal, Lay Jain**
@@ -29,9 +19,9 @@ Simulation or Video
 1.  ESP32 Board
 2.  TFT Display
 3.  Microphone
-4.  2 buttons
-5.  Linear Motor / Actuator
-6.  Powerboard
+4.  2 LEDs
+5.  Servo Motor & Chip
+6.  Power Supply
 7.  Rectangular Wooden Frame (2" x 1")
 8.  Breadboard and Jumper Wires
 
