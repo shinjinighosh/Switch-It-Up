@@ -7,7 +7,7 @@ TFT_eSPI tft = TFT_eSPI();
 
 const int DELAY = 1000;
 const int SAMPLE_FREQ = 8000;                          // Hz, telephone sample rate
-const float SAMPLE_DURATION = 5.5;// 5.5;                        // duration of fixed sampling (seconds)
+const float SAMPLE_DURATION = 2;// 5.5;                        // duration of fixed sampling (seconds)
 const int NUM_SAMPLES = SAMPLE_FREQ * SAMPLE_DURATION;  // number of of samples
 const int ENC_LEN = (NUM_SAMPLES + 2 - ((NUM_SAMPLES + 2) % 3)) / 3 * 4;  // Encoded length of clip
 
@@ -25,10 +25,11 @@ const char API_KEY[] = "AIzaSyAXCndiHqZS3syF4OHO6VzDRJ6o3L3rIwM";
 const uint8_t PIN_1 = 19; //button 1
 const uint8_t PIN_2 = 5; //button 2
 const int INA = 26;
-const int INB = 27;  
+const int INB = 27;
 const int MOTOR_ENABLE = 14;
-const byte GREEN_LIGHT = 32;
-const byte RED_LIGHT = 25;
+const int GREEN_LIGHT = 16;
+const int RED_LIGHT = 17;
+
 /* Global variables*/
 uint8_t button_state; //used for containing button state and detecting edges
 int old_button_state; //used for detecting button edges
@@ -50,8 +51,8 @@ void setup() {
   //  digitalWrite(14, 1); // to keep LED backlight on at setup
 
   tft.init();  //init screen
-  tft.setRotation(1); //adjust rotation
-  tft.setTextSize(10); //default font size
+  tft.setRotation(2); //adjust rotation
+  tft.setTextSize(1); //default font size
   tft.fillScreen(TFT_BLACK); //fill background
   tft.setTextColor(TFT_GREEN, TFT_BLACK); //set color of font to green foreground, black background
   Serial.begin(115200); //begin serial comms
@@ -62,8 +63,6 @@ void setup() {
   pinMode(INA, OUTPUT);
   pinMode(INB, OUTPUT);
   pinMode(MOTOR_ENABLE, OUTPUT);
-  pinMode(GREEN_LIGHT, OUTPUT);
-  pinMode(RED_LIGHT, OUTPUT);
 
   WiFi.begin(NETWORK, PASSWORD); //attempt to connect to wifi
   uint8_t count = 0; //count used for Wifi check times
@@ -92,23 +91,13 @@ void setup() {
 
 //main body of code
 void loop() {
-  //Serial.println("Loop Started");
-  digitalWrite(GREEN_LIGHT, HIGH);
-  digitalWrite(RED_LIGHT, LOW);
-  tft.fillScreen(TFT_GREEN);
+  Serial.println("Loop Started");
   button_state = digitalRead(PIN_1);
-  // Serial.println(button_state); UP: 1, DOWN: 0
-  //if (!button_state && button_state != old_button_state) {
-  if (1){ // @dev: Lay
+  if (1) {
     Serial.println("listening...");
     record_audio();
     Serial.println("sending...");
-    //Indicator to Shut Up
-    digitalWrite(RED_LIGHT, HIGH);
-    digitalWrite(GREEN_LIGHT, LOW);
-    tft.fillScreen(TFT_RED);
     Serial.print("\nStarting connection to server...");
-    //delay(300);
     bool conn = false;
     for (int i = 0; i < 10; i++) {
       int val = (int)client.connect(SERVER, 443);
@@ -139,7 +128,7 @@ void loop() {
       char temp_holder[jump_size + 10] = {0};
       Serial.println("sending data");
       while (ind < len) {
-        delay(80);//experiment with this number @dev (Lay)
+        delay(80);//experiment with this number!
         //if (ind + jump_size < len) client.print(speech_data.substring(ind, ind + jump_size));
         strncat(temp_holder, speech_data + ind, jump_size);
         client.print(temp_holder);
@@ -147,7 +136,6 @@ void loop() {
         memset(temp_holder, 0, sizeof(temp_holder));
       }
       client.print("\r\n");
-      //Serial.print("\r\n\r\n");
       Serial.println("Through send...");
       unsigned long count = millis();
       while (client.connected()) {
@@ -208,8 +196,7 @@ void record_audio() {
   uint32_t text_index = enc_index;
   uint32_t start = millis();
   time_since_sample = micros();
-  //while (sample_num < NUM_SAMPLES && !digitalRead(PIN_1)) { //read in NUM_SAMPLES worth of audio data
-  while(sample_num < NUM_SAMPLES) { // @dev: Lay
+  while (sample_num < NUM_SAMPLES) {
     value = analogRead(AUDIO_IN);  //make measurement
     raw_samples[sample_num % 3] = mulaw_encode(value - 1241); //remove 1.0V offset (from 12 bit reading)
     sample_num++;
@@ -229,7 +216,6 @@ void record_audio() {
 
 
 int8_t mulaw_encode(int16_t sample) {
-  //paste the fast one here.
   const uint16_t MULAW_MAX = 0x1FFF;
   const uint16_t MULAW_BIAS = 33;
   uint16_t mask = 0x1000;
@@ -261,22 +247,22 @@ void commands(char* tr) {
     if (strstr(tr, "off") != NULL || strstr(tr, "Off") != NULL) turnOff = true;
     if (turnOff) {
       tft.fillScreen(TFT_BLACK);
-      tft.println("OFF");
+      tft.println("Light is Off");
       digitalWrite(INA, LOW);
       digitalWrite(INB, HIGH);
       digitalWrite(MOTOR_ENABLE, HIGH);
-      delay(1000);
+      delay(2000);
       digitalWrite(MOTOR_ENABLE, LOW);
     }
     bool turnOn = false;
     if (strstr(tr, "on") != NULL || strstr(tr, "On") != NULL) turnOn = true;
     if (turnOn) {
       tft.fillScreen(TFT_BLACK);
-      tft.println("ON");
+      tft.println("Light is On");
       digitalWrite(INA, HIGH);
       digitalWrite(INB, LOW);
       digitalWrite(MOTOR_ENABLE, HIGH);
-      delay(1000);
+      delay(2000);
       digitalWrite(MOTOR_ENABLE, LOW);
     }
   }
