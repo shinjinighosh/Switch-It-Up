@@ -25,8 +25,10 @@ const char API_KEY[] = "AIzaSyAXCndiHqZS3syF4OHO6VzDRJ6o3L3rIwM";
 const uint8_t PIN_1 = 19; //button 1
 const uint8_t PIN_2 = 5; //button 2
 const int INA = 26;
-const int INB = 27;
+const int INB = 27;  
 const int MOTOR_ENABLE = 14;
+const int GREEN_LIGHT = 16;
+const int RED_LIGHT = 17;
 
 /* Global variables*/
 uint8_t button_state; //used for containing button state and detecting edges
