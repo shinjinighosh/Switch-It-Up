@@ -20,13 +20,12 @@ char response[OUT_BUFFER_SIZE]; //char array buffer to hold HTTP request
 const char PREFIX[] = "{\"config\":{\"encoding\":\"MULAW\",\"sampleRateHertz\":8000,\"languageCode\": \"en-US\", \"speechContexts\":[{\"phrases\":[\"switch\", \"on\", \"off\"]}]}, \"audio\": {\"content\":\"";
 const char SUFFIX[] = "\"}}"; //suffix to POST request
 const int AUDIO_IN = A0; //pin where microphone is connected
-//const char API_KEY[] = "AIzaSyDqpeTAs-OsdG1Q4W4ANSNrNJKv8T7PgX8"; //don't change this
 const char API_KEY[] = "AIzaSyAXCndiHqZS3syF4OHO6VzDRJ6o3L3rIwM";
 
 const uint8_t PIN_1 = 19; //button 1
 const uint8_t PIN_2 = 5; //button 2
 const int INA = 26;
-const int INB = 27;
+const int INB = 27;  
 const int MOTOR_ENABLE = 14;
 const uint8_t GREEN_LIGHT = 16;
 const uint8_t RED_LIGHT = 17;
