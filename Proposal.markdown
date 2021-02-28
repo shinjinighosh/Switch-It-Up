@@ -10,7 +10,9 @@ Instead, in this project, we envision and develop a portable, low-cost, generali
 
 ## Switch-It-Up in Action
 
-Simulation or Video
+### Prelims Video
+
+<iframe width="500" height="374" src="https://www.youtube.com/embed/axUwqVF6-0w" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 
 ## Hardware
 
@@ -20,7 +22,7 @@ Simulation or Video
 2.  TFT Display
 3.  Microphone
 4.  2 LEDs
-5.  Servo Motor & Chip
+5.  Motor & Chip
 6.  Power Supply
 7.  Rectangular Wooden Frame (2" x 1")
 8.  Breadboard and Jumper Wires
@@ -28,7 +30,33 @@ Simulation or Video
 ### Wiring
 
 The following is a schematic of how the different hardware components will be wired together in the final device.
-![Wiring](https://i.imgur.com/Eg9Dhb8.jpg)
+![](https://i.imgur.com/xOng6iF.jpg)
+
+## MakeHarvard Hardware Finals Updates
+
+We have implemented our design as was intended in our proposal two weeks ago, save for a small detail - Digikey canceled the order MakeHarvard staff placed on behalf of us, so we obtained a motor from a nearby store and used that instead of an actuator.
+
+#### Motor and Driver Connections
+
+We added a motor connected to a 6V battery set and an L298N chip which connects it to the ESP32. The ESP32 can use the existing speech-to-text functionality to now turn the motor as is needed, when the trigger words are spoken.
+
+#### Framework
+
+Our motor rests on a wooden platform which is connected by a gear and a toothed stick to a switch-sized cardboard cutout. The motor rotates the gear which in turn pushes the stick up and down, providing enough force and displacement to the cutout to move the switch to on and off positions.
+
+#### Listening Status Indicator
+
+We added two visual aids - red/green LEDs and displays on the TFT to indicate when our switch is listening to you and when not. Now, the device listens for 3-5 seconds while the light is green, before turning red and sending the recorded audio for transcription, checks the text output for trigger phrases such as "switch on" and "switch off", and performs the necessary action (if any). It then proceeds to turn on the green light again, indicating its active status. Additionally, the TFT display also displays "ON" and "OFF" on the screen when the switch is asked to be turned on or off.
+
+#### Power
+
+Instead of being powered to a laptop, the ESP32 can now be used connected to a power bank, any USB switch, or any external power module, giving out switch portability and use of access.
+
+#### Final Product
+
+We now have an efficient, portable and easy-to-use voice-enabled switch which can be installed hassle-free in any room and then used to turn any switch on and off by voice. This is designed to be immensely useful to accessibility services as well as to anyone wishing to turn any switch in any room - be it a dorm room or an overnight hotel room - into a smart voice-controlled switch.
+
+## MakeHarvard Prelims
 
 ### Button Workings
 
